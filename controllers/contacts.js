@@ -30,11 +30,7 @@ const createContact = async (req, res, next) => {
             throw HttpError(400, error.message)
         }
     const result = await contacts.addContact(req.body);
-    const response = {
-      message: "Your contact was created",
-      result: result
-    };
-        res.status(201).json(response)
+        res.status(201).json(result)
     };
 
 const deleteById = async (req, res, next) => {
