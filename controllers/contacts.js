@@ -36,9 +36,6 @@ const deleteById = async (req, res, next) => {
 
 const updateContactsById = async (req, res, next) => {
     const { id } = req.params;
-    if (!req.body) {
-    return next(HttpError(400, "Missing request body"));
-  }
     const result = await contacts.updateContact(id, req.body);
     if (!result) {
      throw HttpError(404, "Not found")
