@@ -44,15 +44,56 @@ const signin = async (req, res) => {
         throw HttpError(401, "Email or password is wrong");
     };
 
+    const { _id: id } = user;
+
     const payload = {
         id: user._id
     }
     const token = jwt.sign(payload, SECRET_KEY, {expiresIn: "23h"});
+    await User.findByIdAndUpdate(id, {token})
+
 
     res.json({ token });
 }
 
+const getCurrent = async (req, res) => {
+    const { name, email } = req.user;
+
+    res.json({
+        name,
+        email
+    })
+}
+
+const logout = async (req, res) => {
+    const { _id } = req.user;
+    await User.findByIdAndUpdate(_id, { token: "" });
+
+    res.json({
+        message: "Logout success"
+    })
+}
+
+const updateSubscription = async (req, res) => {
+    const { _id: id } = req.user;
+    const { subscription } = req.body;
+
+        if (!['starter', 'pro', 'business'].includes(subscription)) {
+        throw HttpError(400, "Invalid subscription value");
+    }
+    
+    await User.findByIdAndUpdate(id, { subscription });
+
+    res.json({
+        message: "Subscription updated successfully"
+    });
+};
+
+
 module.exports = {
     signup: ctrlWrapper(signup),
-    signin: ctrlWrapper(signin)
+    signin: ctrlWrapper(signin),
+    getCurrent: ctrlWrapper(getCurrent),
+    logout: ctrlWrapper(logout),
+    updateSubscription: ctrlWrapper(updateSubscription)
 }

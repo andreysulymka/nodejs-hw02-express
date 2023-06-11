@@ -3,10 +3,13 @@ const Contact = require("../models/contact")
 const {HttpError} = require("../helpers");
 
 const { ctrlWrapper } = require("../decorators");
+// const { query } = require("express");
 
 const getAll = async (req, res, next) => {
-    const {_id: owner} = req.user
-        const result = await Contact.find({owner}, "-createdAt -updatedAt").populate("owner", "-createdAt -updatedAt");
+    const { _id: owner } = req.user;
+    const { page = 1, limit = 10, ...query } = req.query;
+    const skip = (page - 1) * limit;
+        const result = await Contact.find({owner, ...query}, "-createdAt -updatedAt", {skip, limit}).populate("owner", "-createdAt -updatedAt");
         res.json(result)
     };
 
