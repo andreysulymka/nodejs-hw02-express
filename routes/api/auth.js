@@ -11,8 +11,8 @@ const {authenticate} = require("../../middlewares")
 
 const router = express.Router();
 
-router.post("/signup", validateBody(userRegisterSchema), authController.signup)
-router.post("/signin", validateBody(userLoginSchema), authController.signin)
+router.post("/register", validateBody(userRegisterSchema), authController.signup)
+router.post("/login", validateBody(userLoginSchema), authController.signin)
 router.get("/current", authenticate, authController.getCurrent)
 router.post("/logout", authenticate, authController.logout)
 router.patch("/subscription", authenticate, authController.updateSubscription)

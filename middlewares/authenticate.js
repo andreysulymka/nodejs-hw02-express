@@ -12,19 +12,19 @@ const authenticate = async (req, res, next) => {
     const [bearer, token] = authorization.split(" ");
 
     if (bearer !== "Bearer") {
-        next(HttpError(401))
+        next(HttpError(401, "Unathorized"))
     }
     try {
         const { id } = jwt.verify(token, SECRET_KEY);
         const user = await User.findById(id);
         if (!user || !user.token) {
-          next(HttpError(401))  
+          next(HttpError(401, "Unathorized"))  
         }
         req.user = user;
         next();
     }
     catch {
-        next(HttpError(401));
+        next(HttpError(401, "Unathorized"));
     }
 }
 

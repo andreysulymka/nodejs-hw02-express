@@ -22,9 +22,10 @@ const signup = async (req, res) => {
     const newUser = await User.create({...req.body, password: hashPassword});
     
     res.status(201).json({
-        email: newUser.email,
-        password: newUser.password,
-        subscription: newUser.subscription,
+        user: {
+            email: newUser.email,
+            subscription: newUser.subscription
+        }
     })
 }
 
@@ -44,7 +45,7 @@ const signin = async (req, res) => {
         throw HttpError(401, "Email or password is wrong");
     };
 
-    const { _id: id } = user;
+    const { _id: id, subscription} = user;
 
     const payload = {
         id: user._id
@@ -53,15 +54,21 @@ const signin = async (req, res) => {
     await User.findByIdAndUpdate(id, {token})
 
 
-    res.json({ token });
+    res.status(200).json({ 
+        token,
+  user: {
+    email: user.email,
+    subscription,
+  }
+     });
 }
 
 const getCurrent = async (req, res) => {
-    const { name, email } = req.user;
+    const { email, subscription } = req.user;
 
     res.json({
-        name,
-        email
+        email,
+        subscription
     })
 }
 
@@ -69,8 +76,8 @@ const logout = async (req, res) => {
     const { _id } = req.user;
     await User.findByIdAndUpdate(_id, { token: "" });
 
-    res.json({
-        message: "Logout success"
+    res.status(204).json({
+        message: "No content"
     })
 }
 
