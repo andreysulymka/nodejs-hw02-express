@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 const path = require("path");
 const Jimp = require("jimp");
+const fs = require("fs")
 
 const User = require("../models/user");
 
@@ -115,6 +116,8 @@ const updateAvatar = async (req, res) => {
 
     const avatarURL = path.join("avatars", filename);
     await User.findByIdAndUpdate(_id, { avatarURL });
+
+    await fs.unlink(oldPath);
 
     res.json({
         avatarURL,
