@@ -4,15 +4,18 @@ const jwt = require("jsonwebtoken");
 const gravatar = require("gravatar");
 const path = require("path");
 const Jimp = require("jimp");
-const fs = require("fs/promises")
+const fs = require("fs/promises");
+const { nanoid } = require("nanoid");
 
 const User = require("../models/user");
 
 const { HttpError } = require("../helpers");
 
+const {sendEmail} = require("../helpers")
+
 const { ctrlWrapper } = require("../decorators");
 
-const { SECRET_KEY } = process.env;
+const { SECRET_KEY, BASE_URL } = process.env;
 
 const avatarsDir = path.resolve("public", "avatars")
 
@@ -24,10 +27,19 @@ const signup = async (req, res) => {
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
+    const verificationToken = nanoid()
 
     const avatarURL = gravatar.url(email)
 
-    const newUser = await User.create({...req.body, password: hashPassword, avatarURL});
+    const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL, verificationToken });
+    
+    const verifyEmail = {
+        to: email,
+        subject: "Verify email",
+        html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationToken}">Click to verify email</a>`
+    };
+
+    await sendEmail(verifyEmail);
     
     res.status(201).json({
         user: {
