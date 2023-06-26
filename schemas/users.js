@@ -11,7 +11,12 @@ const userLoginSchema = Joi.object({
   email: Joi.string().required(),
 });
 
+const userEmailSchema = Joi.object({
+  email: Joi.string().required(),
+});
+
 module.exports = {
     userRegisterSchema,
-    userLoginSchema
+    userLoginSchema, 
+    userEmailSchema
 };
