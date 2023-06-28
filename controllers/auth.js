@@ -50,8 +50,8 @@ const signup = async (req, res) => {
 }
 
 const verify = async (req, res) => {
-    const { verificatonToken } = req.params;
-    const user = await User.findOne({ verificatonToken });
+    const { verificationToken } = req.params;
+    const user = await User.findOne({ verificationToken });
     if (!user) {
         throw HttpError(404, 'User not found')
     }
@@ -67,7 +67,7 @@ const resendVerify = async (req, res) => {
     const { email } = req.body;
     const user = await User.findOne({ email });
 
-    if (!usery) {
+    if (!user) {
         throw HttpError(401)
     }
 
@@ -184,7 +184,7 @@ const updateAvatar = async (req, res) => {
 module.exports = {
     signup: ctrlWrapper(signup),
     verify: ctrlWrapper(verify),
-    resendVerify: ctrlWrapper(resendVerify)
+    resendVerify: ctrlWrapper(resendVerify),
     signin: ctrlWrapper(signin),
     getCurrent: ctrlWrapper(getCurrent),
     logout: ctrlWrapper(logout),
